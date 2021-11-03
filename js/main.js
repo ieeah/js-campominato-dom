@@ -18,19 +18,17 @@ const selector = document.getElementById('level');
 const main = document.querySelector('main');
 const wrapGrid = document.querySelector('.wrap_grid');
 
-//variables
-let totSquares = 0;
-let rowSquares = 0;
-const maxBombs = 16;
-let maxAttempts = totSquares - maxBombs;
-
-
-
 
 // al click bisogna creare n div.square in base al livello di difficoltà selezionato dall'utente
 playBtn.addEventListener('click', function() {
+
+    let totSquares = 0;
+    let rowSquares = 0;
+    const maxBombs = 16;
+    
     //reset del contenuto di wrap_grid
     console.log('play clicked');
+
     wrapGrid.innerHTML = '';
     // ottenimento del valore di difficoltà
     const size = selector.value;
@@ -49,25 +47,22 @@ playBtn.addEventListener('click', function() {
             totSquares = 49;
             rowSquares = 7;
     }
-    // creazione dei div in base al livello di difficoltà
-    for (let i = 0; i < totSquares; i++) {
-        const grid = createSquare(i, totSquares);
+    let maxAttempts = totSquares - maxBombs;
+    const bombList = bombs(maxBombs, totSquares);
+    // per totSquares volte
+    for (let i = 1; i < totSquares + 1; i++) {
+        const grid = createSquare(i, rowSquares, bombList);
         wrapGrid.append(grid);
     }
-        
+
+
 
     // generare 16 numeri casuali e inserirli nell'array se non presenti
 
-    const bombList = bombs(maxBombs, totSquares);
+
     console.log('lista bombe', bombList);
 
-    // innerText dell'elemento cliccato è presente in bomblist?
-    // si? cell.classList.add('bomb');
-    // no? 
 
-    if (bombList.includes(square.innerText)) {
-        console.log('bomb clicked');
-    }
 });
 
 
@@ -118,20 +113,33 @@ Proviamo sempre prima con dei console.log() per capire se stiamo ricevendo i dat
 
 
 // funzioni
-function createSquare(num, rowSquares) {
+function createSquare(i, rowSquares, listabombe) {
         //creazione dell'elemento
         const square = document.createElement('div');
         // aggiunta della classe square
         square.classList.add('square');
         // all'interno inseriamo il numero di index
-        square.append(num);
+        square.append(i);
         // inseriamo le dimensioni di ogni singola cella
         square.style.width = `calc(100% / ${rowSquares})`;
         square.style.height = `calc(100% / ${rowSquares})`;
         //inseriamo il listener al click
         square.addEventListener('click', function() {
             //aggiungiamo la classe active alle celle al click
-        square.classList.add('active');
+            square.classList.add('active');
+            console.log(square.innerText);
+            // quando clicchiamo sul quadratino ci prendiamo il suo innerText e lo compariamo con gli elementi inclusi in bomblist
+            if (listabombe.includes(parseInt(square.innerText))) {
+                console.log('bomba');
+                // è presente, si aggiunge la classe bomba
+                square.classList.add('bomb');
+                // codice endgame
+            } else {
+                // non è presente, lo inseriamo nella lista dei tentativi come numero e non come stringa
+                // quando la lista dei tentativi.length è uguale a al valore di maxAttempts la partita è vinta
+            }
+            
+
     });
 return square;
 }
