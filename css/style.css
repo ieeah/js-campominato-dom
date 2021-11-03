@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    background-color: aquamarine;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+nav,
+footer {
+    padding: 15px 20px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand img {
+    margin-right: 20px;
+}
+
+select {
+    width: 150px;
+}
+button {
+    width: 75px;
+}
+
+main {
+    flex-grow: 1;
+    display: grid;
+    place-items: center;
+}
+
+.wrap_grid {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 60vh;
+    aspect-ratio: 1 / 1;
+}
+
+.square {
+    cursor: pointer;
+    border: 1px solid black;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+}
+
+.square.active {
+    background-color: dodgerblue;
+    color: white;
+}
+
+footer {
+text-align: left;
+}
