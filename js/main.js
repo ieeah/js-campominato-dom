@@ -21,15 +21,11 @@ const wrapGrid = document.querySelector('.wrap_grid');
 
 // al click bisogna creare n div.square in base al livello di difficoltà selezionato dall'utente
 playBtn.addEventListener('click', function() {
-
+    wrapGrid.innerHTML = '';
     let totSquares = 0;
     let rowSquares = 0;
     const maxBombs = 16;
-    
-    //reset del contenuto di wrap_grid
-    console.log('play clicked');
-
-    wrapGrid.innerHTML = '';
+    const attempts = [];
     // ottenimento del valore di difficoltà
     const size = selector.value;
     switch (size) {
@@ -51,69 +47,15 @@ playBtn.addEventListener('click', function() {
     const bombList = bombs(maxBombs, totSquares);
     // per totSquares volte
     for (let i = 1; i < totSquares + 1; i++) {
-        const grid = createSquare(i, rowSquares, bombList);
+        const grid = createSquare(i, rowSquares, bombList, maxAttempts, attempts, totSquares);
         wrapGrid.append(grid);
     }
-
-
-
-    // generare 16 numeri casuali e inserirli nell'array se non presenti
-
-
-    console.log('lista bombe', bombList);
-
-
 });
 
 
 
-
-
-
-
-
-
-
-
-/*Copiamo la griglia fatta ieri nella nuova repo e aggiungiamo la logica del gioco 
-Il computer deve generare 16 numeri casuali nello stesso range della difficoltà prescelta: le bombe.
-I numeri nella lista delle bombe non possono essere duplicati.
-In seguito l’utente clicca su ogni cella: se il numero è presente nella lista dei numeri generati - abbiamo calpestato una bomba - la cella si colora di rosso e la partita termina, altrimenti la cella cliccata si colora di azzurro e l’utente può continuare a cliccare sulle altre celle.
-La partita termina quando il giocatore clicca su una bomba o raggiunge il numero massimo possibile di numeri consentiti.
-Al termine della partita il software deve scoprire tutte le bombe e comunicare il punteggio, cioè il numero di volte che l’utente ha inserito un numero consentito.
-Scriviamo prima cosa vogliamo fare passo passo in italiano, dividiamo il lavoro in micro problemi.
-Ad esempio:
-Di cosa ho bisogno per generare i numeri delle bombe?
-Proviamo sempre prima con dei console.log() per capire se stiamo ricevendo i dati giusti.
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// funzioni
-function createSquare(i, rowSquares, listabombe) {
+// FUNZIONI
+function createSquare(i, rowSquares, listabombe, maxAttempts, attempts, totSquares) {
         //creazione dell'elemento
         const square = document.createElement('div');
         // aggiunta della classe square
@@ -125,36 +67,15 @@ function createSquare(i, rowSquares, listabombe) {
         square.style.height = `calc(100% / ${rowSquares})`;
         //inseriamo il listener al click
         square.addEventListener('click', function() {
-            //aggiungiamo la classe active alle celle al click
-            square.classList.add('active');
-            console.log(square.innerText);
-            // quando clicchiamo sul quadratino ci prendiamo il suo innerText e lo compariamo con gli elementi inclusi in bomblist
-            if (listabombe.includes(parseInt(square.innerText))) {
-                console.log('bomba');
-                // è presente, si aggiunge la classe bomba
-                square.classList.add('bomb');
-                // codice endgame
-            } else {
-                // non è presente, lo inseriamo nella lista dei tentativi come numero e non come stringa
-                // quando la lista dei tentativi.length è uguale a al valore di maxAttempts la partita è vinta
-            }
-            
-
+            handleSquareClick(square, listabombe, attempts, maxAttempts, rowSquares)
     });
 return square;
 }
 
-function bombs(maxlength, nmax) {
-// creare un array fantasma che mi tenga traccia dei numeri creati
-// finché il numero di elementi nell'array non coincide con il numero di bombe di cui ho bisogno (16)
-// generare numeri random
-// controllare che siano presenti nell'array fantasma
-// no? inserisci il numero
-// si? ricomincia il ciclo fino a ch la condizione del while non è corretta
-// return la lista, che verrà usata come lista di caselle in cui sarà presente la bomba
+function bombs(maxBombs, totSquares) {
     let bombs = [];
-    while (bombs.length <= maxlength - 1) {
-        let n = getRangeRand(1, nmax);
+    while (bombs.length <= maxBombs - 1) {
+        let n = getRangeRand(1, totSquares);
         if (!bombs.includes(n)) {
             bombs.push(n);
         }
@@ -164,4 +85,42 @@ function bombs(maxlength, nmax) {
 
 function getRangeRand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function handleSquareClick(square, bombList, attempts, maxAttempts, rowSquares) {
+    // ottenimento valore cella
+    const squareValue = parseInt(square.innerText);
+    //controllare che la cella cliccata sia una bomba o meno
+    if (bombList.includes(squareValue)) {
+        // se è una bomba
+        square.classList.add('bomb');
+        // messaggio sconfitta
+        wrapGrid.innerHTML += `<h1>Che peccato! hai cliccato sulla cella ${square.innerText}, che purtroppo era una bomba!</h1>`;
+        // rendere tutte le bombe rosse
+        explodedBombs(bombList, rowSquares);
+    } else {
+        square.classList.add('active');
+        attempts.push(squareValue);
+    }
+
+    if (attempts.length === maxAttempts) {
+        wrapGrid.innerHTML += `<h1>Congratulazioni! Sei riuscito a trovare tutte le ${maxAttempts} celle libere dalle bombe!</h1>`;
+        explodedBombs(bombList, rowSquares);
+    }
+}
+
+function explodedBombs(bombList, rowSquares) {
+    const squares = document.querySelectorAll('.square');
+    for (let i = 0; i < squares.length; i++) {
+        const square = squares[i];
+        const squareValue = parseInt(square.innerText);
+        square.style = 'pointer-events: none';
+        square.style = 'cursor: default';
+        square.style.width = `calc(100% / ${rowSquares})`;
+        square.style.height = `calc(100% / ${rowSquares})`;
+        if (bombList.includes(squareValue)) {
+            square.classList.add('bomb');
+        }
+    }
+
 }

@@ -51,9 +51,12 @@ main {
 
 .wrap_grid {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
-    max-height: 60vh;
+    height: 60vh;
     aspect-ratio: 1 / 1;
+    margin-bottom: 20px;
 }
 
 .square {
@@ -67,6 +70,8 @@ main {
 .square.active {
     background-color: dodgerblue;
     color: white;
+    cursor: default;
+    pointer-events: none;
 }
 
 .square.bomb {
