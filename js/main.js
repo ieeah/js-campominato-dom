@@ -17,6 +17,7 @@ const playBtn = document.getElementById('play_btn');
 const selector = document.getElementById('level');
 const main = document.querySelector('main');
 const wrapGrid = document.querySelector('.wrap_grid');
+const counter = document.querySelector('h6');
 
 
 // al click bisogna creare n div.square in base al livello di difficoltà selezionato dall'utente
@@ -97,19 +98,20 @@ function handleSquareClick(square, bombList, attempts, maxAttempts, rowSquares) 
         // messaggio sconfitta
         wrapGrid.innerHTML += `<h1>Che peccato! hai cliccato sulla cella ${square.innerText}, che purtroppo era una bomba!</h1>`;
         // rendere tutte le bombe rosse
-        explodedBombs(bombList, rowSquares);
+        explodedBombs(bombList, rowSquares, counter);
     } else {
         square.classList.add('active');
         attempts.push(squareValue);
+        counter.innerText = `Celle disponibili: ${(maxAttempts - 1) - (attempts.length - 1)}`;
     }
 
     if (attempts.length === maxAttempts) {
         wrapGrid.innerHTML += `<h1>Congratulazioni! Sei riuscito a trovare tutte le ${maxAttempts} celle libere dalle bombe!</h1>`;
-        explodedBombs(bombList, rowSquares);
+        explodedBombs(bombList, rowSquares, counter);
     }
 }
 
-function explodedBombs(bombList, rowSquares) {
+function explodedBombs(bombList, rowSquares, counter) {
     const squares = document.querySelectorAll('.square');
     for (let i = 0; i < squares.length; i++) {
         const square = squares[i];
@@ -123,4 +125,5 @@ function explodedBombs(bombList, rowSquares) {
         }
     }
 
+    counter.innerText = ``;
 }

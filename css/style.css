@@ -49,6 +49,10 @@ main {
     place-items: center;
 }
 
+main h6 {
+    height: 20px;
+}
+
 .wrap_grid {
     display: flex;
     justify-content: center;
@@ -57,6 +61,8 @@ main {
     height: 60vh;
     aspect-ratio: 1 / 1;
     margin-bottom: 20px;
+    position: relative;
+    bottom: 50px;
 }
 
 .square {
